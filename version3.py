@@ -11,7 +11,7 @@ fig = pt.figure()
 ax = fig.add_subplot(111)
 
 #定义函数阶数
-order = 4
+order = 9
 #定义步长a
 a=0.01
 #极小值e
@@ -24,20 +24,19 @@ delta=[]
 for i in range(0,order+1):
 	theta.append(0.0)#初始化所有参数均为0
 	delta.append(0.0)#初始化梯度向量
-#theta=[ -2.70734496e-01,3.77014150e+00,-8.36016933e+00,1.07926487e+01,-7.58712667e+00,  3.04762200e+00,  -7.27774747e-01,   1.02392057e-01,-7.83301069e-03,   2.51048228e-04]
 theta = 200*numpy.random.random(size=order+1)-100#-100,100
-#print theta
 theta=numpy.array(theta)
 delta=numpy.array(delta)
 
 
-def addGaussian(num, s, sigma): # mu=0
+def addGaussian(num, s, sigma):
 	mu = 0
-	offset_Guassian = numpy.random.normal(mu, sigma, num)
-	s_res = s + offset_Guassian
-	return s_res
+	for i in range(0,len(s)):
+		offset_Guassian = random.gauss(mu, sigma)
+		s[i] = s[i] + offset_Guassian
+	return s
 
-def genData(num=20, xrange=1, yrange=1, sigma=0.1):
+def genData(num=20, xrange=1, yrange=1, sigma=0.12):
 	interv = xrange*1.0/num
 	t = numpy.arange(0, xrange, interv)
 	s = yrange*numpy.sin(2*numpy.pi*t)
@@ -73,7 +72,7 @@ def updateTheta(theta,delta,X,Y,order,a):
 		delta[i]=sum
 		theta[i]=theta[i]-a*sum
 
-X,Y = genData(100)
+X,Y = genData(10)
 ax.plot(X,Y,color='r',linestyle='',marker='.')
 count=0
 while True:
