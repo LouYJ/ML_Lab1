@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # coding=utf-8
-#此版本在最小二乘法的基础上加入了惩罚项优化
+#此版本使用了最小二乘法拟合
 
 import numpy
 import random
@@ -11,7 +11,7 @@ fig = pt.figure()
 ax = fig.add_subplot(111)
 
 # 在0-2*pi的区间上生成100个点作为输入数据
-X = numpy.linspace(0,2*numpy.pi,100,endpoint=True)
+X = numpy.linspace(0,2*numpy.pi,10,endpoint=True)
 Y = numpy.sin(X)
 
 # 对输入数据加入gauss噪声
@@ -64,7 +64,8 @@ matrix_A=numpy.linalg.solve(matrix_X,matrix_Y)
 
 #画出拟合后的曲线
 #print(matrix_A)
-x_t= numpy.arange(0,2*numpy.pi,0.01)
+x_t= numpy.arange(-1,7,0.01)
+temp=numpy.sin(x_t)
 y_t=[]
 for i in range(0,len(x_t)):
 	value=0.0
@@ -77,7 +78,8 @@ for i in range(0,len(x_t)):
 	y_t.append(value)
 	
 ax.plot(x_t,y_t,color='g',linestyle='-',marker='')
-
+ax.plot(x_t,temp,color='black',linestyle='-',marker='')
+ax.axis([-1, 7, -3, 3])
 ax.legend()
 #展示图像
 pt.show()
