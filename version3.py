@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # coding=utf-8
-#此版本使用了梯度下降优化
+#此版本使用了梯度下降法进行曲线拟合
 
 import numpy
 import random
@@ -14,10 +14,9 @@ ax = fig.add_subplot(111)
 order = 9#定义函数阶数
 a=0.01#定义步长a
 e=1e-3#极小值e
-lamb=3.0#惩罚项参数
+num=10#定义样本数量
 theta=[]#定义权值向量theta
 delta=[]#定义梯度向量
-
 
 for i in range(0,order+1):
 	theta.append(0.0)#初始化所有参数均为0
@@ -38,11 +37,12 @@ def addGaussian(num, s, sigma):
 #函数功能：用于生成样本数据
 def generateData(num, xrange=1, yrange=1, sigma=0.12):
 	interv = xrange*1.0/num
+	tmp=numpy.arange(0, xrange, xrange*1.0/100)
 	x = numpy.arange(0, xrange, interv)
-	t = yrange*numpy.sin(2*numpy.pi*x)
+	t = yrange*numpy.sin(2*numpy.pi*tmp)
 	y = yrange*numpy.sin(2*numpy.pi*x)
 	y = addGaussian(y.shape[0], y, sigma)
-	return x, y, t
+	return x, y, t,tmp
 	
 #函数功能：估计函数
 def estimateFun(x,theta,order):
@@ -69,13 +69,13 @@ def updateTheta(theta,delta,X,Y,order,a):
 			value=numpy.power(X[j],i)*(estimateFun(X[j],theta,order)-Y[j])
 #			print estimateFun(X[j],theta,order)-Y[j]
 			sum+=value
-		delta[i]=sum+lamb*theta[i]
+		delta[i]=sum
 		theta[i]=theta[i]-a*sum
 
 #mian
-X,Y,tmp = generateData(10)
-ax.plot(X,Y,color='r',linestyle='',marker='.')#画出加入噪声后的数据
-ax.plot(X,tmp,color='black',linestyle='-',marker='')#画出正弦曲线
+X,Y,tmp,t = generateData(num)
+#ax.plot(X,Y,color='r',linestyle='',marker='.')#画出加入噪声后的数据
+#ax.plot(X,tmp,color='black',linestyle='-',marker='')#画出正弦曲线
 count=0
 while True:
 	tmp1=lossFun(X,Y,theta, order)
@@ -100,8 +100,17 @@ for i in range(0,len(x_t)):
 	y_t.append(value)	
 	
 #print theta
-ax.plot(x_t,y_t,color='g',linestyle='-',marker='')
-ax.axis([0, 1, -2, 2])
-ax.legend()
+
+ax.set_xlabel('X')
+ax.set_ylabel('Y')
+ax.set_title('Gradient Descent Method')
+
+point=ax.plot(X,Y,color='r',linestyle='',marker='.')
+line1=ax.plot(x_t,y_t,color='green',linestyle='-',marker='')
+#line2=ax.plot(x_t,temp,color='blue',linestyle='-',marker='')
+line3=ax.plot(t,tmp,color='black',linestyle='-',marker='')
+
+ax.axis([0, 1, -1.5, 1.5])
+ax.legend( (line1[0], line3[0], point[0]), ('Fitted curve', 'Sin(x)', 'Data Sample') )
 #展示图像
 pt.show()

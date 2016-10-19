@@ -10,23 +10,28 @@ import math
 fig = pt.figure()
 ax = fig.add_subplot(111)
 
-# 在0-2*pi的区间上生成100个点作为输入数据
-X = numpy.linspace(0,2*numpy.pi,10,endpoint=True)
-Y = numpy.sin(X)
+#函数功能：加入高斯噪声
+def addGaussian(num, s, sigma):
+	mu = 0
+	for i in range(0,len(s)):
+		offset_Guassian = random.gauss(mu, sigma)
+		s[i] = s[i] + offset_Guassian
+	return s
 
-# 对输入数据加入gauss噪声
-mu = 0# 定义gauss噪声的均值
-sigma = 0.12# 定义gauss噪声的方差
-for i in range(X.size):
-	X[i] += random.gauss(mu,sigma)
-	Y[i] += random.gauss(mu,sigma)
-	
-# 画出加入gauss噪声的所有数据点
-ax.plot(X,Y,linestyle='',marker='.')
-#pt.show()
+#函数功能：用于生成样本数据
+def generateData(num, xrange=1, yrange=1, sigma=0.12):
+	interv = xrange*1.0/num
+	tmp=numpy.arange(0, xrange, xrange*1.0/100)
+	x = numpy.arange(0, xrange, interv)
+	t = yrange*numpy.sin(2*numpy.pi*tmp)
+	y = yrange*numpy.sin(2*numpy.pi*x)
+	y = addGaussian(y.shape[0], y, sigma)
+	return x, y, t, tmp
 
-# 定义函数阶数
-order = 9
+order = 9#定义函数阶数
+num = 100#定义样本数量
+
+X,Y,t,tmp=generateData(num)
 
 # 求解系数矩阵，设方程组为X·A=Y，此时X矩阵对角线上各元素都加上了lamda
 matrix_X=[]#设为矩阵X
@@ -42,9 +47,6 @@ for i in range(0,order+1):
 			element+=mul
 		row.append(element)
 	matrix_X.append(row)
-	
-#print(len(X))
-#print(matrix_X[0][0])
 matrix_X=numpy.array(matrix_X)
 
 matrix_Y=[]#设为矩阵Y
@@ -63,7 +65,6 @@ matrix_Y=numpy.array(matrix_Y)
 matrix_A=numpy.linalg.solve(matrix_X,matrix_Y)
 
 #画出拟合后的曲线
-#print(matrix_A)
 x_t= numpy.arange(-1,7,0.01)
 temp=numpy.sin(x_t)
 y_t=[]
@@ -76,10 +77,18 @@ for i in range(0,len(x_t)):
 		dy*=matrix_A[j]
 		value+=dy
 	y_t.append(value)
-	
-ax.plot(x_t,y_t,color='g',linestyle='-',marker='')
-ax.plot(x_t,temp,color='black',linestyle='-',marker='')
-ax.axis([-1, 7, -3, 3])
-ax.legend()
+
+
+ax.set_xlabel('X')
+ax.set_ylabel('Y')
+ax.set_title('Least Squares Method')
+
+point=ax.plot(X,Y,color='r',linestyle='',marker='.')
+line1=ax.plot(x_t,y_t,color='green',linestyle='-',marker='')
+#line2=ax.plot(x_t,temp,color='blue',linestyle='-',marker='')
+line3=ax.plot(tmp,t,color='black',linestyle='-',marker='')
+
+ax.axis([0, 1, -1.5, 1.5])
+ax.legend( (line1[0], line3[0], point[0]), ('Fitted curve', 'Sin(x)', 'Data Sample') )
 #展示图像
 pt.show()

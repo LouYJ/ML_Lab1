@@ -17,11 +17,12 @@ def addGaussian(num, s, sigma):
 #函数功能：用于生成样本数据
 def generateData(num, xrange=1, yrange=1, sigma=0.12):
 	interv = xrange*1.0/num
+	tmp=numpy.arange(0, xrange, xrange*1.0/100)
 	x = numpy.arange(0, xrange, interv)
-	t = yrange*numpy.sin(2*numpy.pi*x)
+	t = yrange*numpy.sin(2*numpy.pi*tmp)
 	y = yrange*numpy.sin(2*numpy.pi*x)
 	y = addGaussian(y.shape[0], y, sigma)
-	return x, y, t
+	return x, y, t, tmp
 	
 #函数功能：估计函数
 def estimateFun(x,theta,order):
@@ -138,7 +139,7 @@ order = 9
 #定义数据量
 num = 10
 #定义惩罚项系数
-lamb=1
+lamb=100
 
 #初始化一组权值向量theta
 theta=[]#定义权值向量theta
@@ -147,9 +148,7 @@ for i in range(0,order+1):
 theta = 200*numpy.random.random(size=order+1)-100#自动生成一组theta，范围介于-100到100
 theta=numpy.array(theta)
 
-X,Y,tmp = generateData(100)#生成数据
-ax.plot(X,Y,color='r',linestyle='',marker='.')#画出加入噪声后的数据
-ax.plot(X,tmp,color='black',linestyle='-',marker='')#画出正弦曲线
+X,Y,tmp,t = generateData(num)#生成数据
 
 #利用共轭梯度法进行拟合
 theta=conjugateGradient(X, Y, theta,order,lamb)
@@ -159,9 +158,17 @@ y_t=[]
 for i in range(0,len(x_t)):
 	value=estimateFun(x_t[i],theta,order)
 	y_t.append(value)
-ax.plot(x_t,y_t,color='g',linestyle='-',marker='')
+	
+ax.set_xlabel('X')
+ax.set_ylabel('Y')
+ax.set_title('Conjugate gradient method(Add penalty term)')
 
-#展示图像
+point=ax.plot(X,Y,color='r',linestyle='',marker='.')
+line1=ax.plot(x_t,y_t,color='green',linestyle='-',marker='')
+#line2=ax.plot(x_t,temp,color='blue',linestyle='-',marker='')
+line3=ax.plot(t,tmp,color='black',linestyle='-',marker='')
+
 ax.axis([0, 1, -1.5, 1.5])
-ax.legend()
+ax.legend( (line1[0], line3[0], point[0]), ('Fitted curve', 'Sin(x)', 'Data Sample') )
+#展示图像
 pt.show()
