@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # coding=utf-8
-#此版本使用了梯度下降优化
+#此版本使用了梯度下降优化并加入了惩罚项
 
 import numpy
 import random
@@ -14,10 +14,8 @@ ax = fig.add_subplot(111)
 order = 9#定义函数阶数
 a=0.01#定义步长a
 e=1e-3#极小值e
-lamb=3.0#惩罚项参数
 theta=[]#定义权值向量theta
 delta=[]#定义梯度向量
-
 
 for i in range(0,order+1):
 	theta.append(0.0)#初始化所有参数均为0
@@ -69,7 +67,7 @@ def updateTheta(theta,delta,X,Y,order,a):
 			value=numpy.power(X[j],i)*(estimateFun(X[j],theta,order)-Y[j])
 #			print estimateFun(X[j],theta,order)-Y[j]
 			sum+=value
-		delta[i]=sum+lamb*theta[i]
+		delta[i]=sum
 		theta[i]=theta[i]-a*sum
 
 #mian

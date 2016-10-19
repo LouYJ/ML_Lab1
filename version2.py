@@ -11,7 +11,7 @@ fig = pt.figure()
 ax = fig.add_subplot(111)
 
 # 在0-2*pi的区间上生成100个点作为输入数据
-X = numpy.linspace(0,2*numpy.pi,100,endpoint=True)
+X = numpy.linspace(0,2*numpy.pi,10,endpoint=True)
 Y = numpy.sin(X)
 
 # 对输入数据加入gauss噪声
@@ -29,7 +29,7 @@ ax.plot(X,Y,linestyle='',marker='.')
 order = 9
 
 # 定义权重lamda
-lamda = 0
+lamda = 10000000000
 
 # 求解系数矩阵，设方程组为X·A=Y，此时X矩阵对角线上各元素都加上了lamda
 matrix_X=[]#设为矩阵X
